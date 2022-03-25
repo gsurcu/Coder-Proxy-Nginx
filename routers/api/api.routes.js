@@ -8,12 +8,13 @@ router.use('/auth', authRoutes);
 
 router.get('/randoms', (req, res) => {
   const { cant } = req.query
-  console.log(cant)
+  // console.log(cant,1)
   const random = fork(path.resolve(__dirname, './random/random.routes.js'))
 
-  random.send({cant: +cant})
+  random.send({cant: cant})
   random.on('message', dato => {
-    res.send(`El resultado es => ${dato}`);
+    // console.log(dato)
+    res.render('random',{numbers: dato});
   })
 })
 
