@@ -4,12 +4,13 @@ const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 const passport = require('./middlewares/passport');
 const args = require('./utils/args.utils')
+const cluster = require('cluster')
 
 const env = require('./env.config');
 const dbConfig = require('./db/config');
 const apisRoutes = require('./routers/app.routers');
 
-
+const mode = args.mode;
 const app = express();
 
 // Middlewares
@@ -35,10 +36,45 @@ app.set('view engine', 'ejs');
 // Routes
 app.use(apisRoutes);
 
-app.listen(args.p, async () => {
-  mongoose.connect(dbConfig.mongodb.connectTo('ecommerce'))
-  .then(() => {
-    console.log('Connected to DB!');
-    console.log('Server is up and running on port: ', +args.p);
+if (mode == 'cluster') {
+  if (cluster.isPrimary) {
+    console.log('Primary process PID =>', process.pid)
+    
+    const numCPUs = os.cpus().length
+    console.log('No. de nucleos => ', numCPUs)
+  
+    for (let i = 0; i < numCPUs; i++) cluster.fork();
+  
+    cluster.on('exit', (worker, code) => {
+      console.log('Worker ', worker.process.pid, `Exitted on ${new Date().toLocaleDateString()}`);
+      cluster.fork()
+    })
+  } else {
+    const PORT = args.PORT
+    const runningServer = app.listen(PORT, async () => {
+      mongoose.connect(dbConfig.mongodb.connectTo('ecommerce'))
+      .then(() => {
+        console.log('Connected to DB!');
+        console.log('[', process.pid, `] => running on http://localhost:${PORT}`);
+      });
+    });
+    
+    runningServer.on('error', (error) => {
+      console.log(error.message)
+    });
+  }
+  
+} else {
+  const PORT = args.PORT
+  const runningServer = app.listen(PORT, async () => {
+    mongoose.connect(dbConfig.mongodb.connectTo('ecommerce'))
+    .then(() => {
+      console.log('Connected to DB!');
+      console.log('[', process.pid, `] => running on http://localhost:${PORT}`);
+    });
   });
-});
+  
+  runningServer.on('error', (error) => {
+    console.log(error.message)
+  });
+}
