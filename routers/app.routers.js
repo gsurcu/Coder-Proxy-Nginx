@@ -3,7 +3,7 @@ const express = require('express');
 const apiRoutes = require('./api/api.routes');
 const auth = require('../middlewares/auth');
 const infoRoute = require('./info/info.routes')
-
+const PORT = require('../utils/args.utils').PORT
 const router = express.Router();
 
 
@@ -11,6 +11,12 @@ const router = express.Router();
 router.use('/api', apiRoutes);
 
 router.get('/info', infoRoute)
+
+router.get('/datos', (req, res) => {
+  console.table({ port: PORT, date: new Date().toISOString()});
+  const html =`Servidor express <span style="color: coral;font-weight: bold;">(NginX)</span> | ${PORT} - <b>PID => ${process.pid}</b> - ${new Date().toLocaleString()}`
+  res.send(html);
+});
 
 router.get('/', (req, res) => {
   const user = req.user;
