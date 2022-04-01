@@ -18,3 +18,6 @@ pm2 start index.js --name=Cluster-Server --watch -i max -- --PORT=8082
 
 pm2 delete all
 ## Nginx
+
+node index.js --mode fork
+node index.js --mode cluster

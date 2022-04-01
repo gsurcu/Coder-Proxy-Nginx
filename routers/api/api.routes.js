@@ -14,7 +14,7 @@ router.get('/randoms', (req, res) => {
   random.send({cant: cant})
   random.on('message', dato => {
     // console.log(dato)
-    res.render('random',{numbers: dato});
+    res.render('random',{numbers: dato, pid: process.pid});
   })
 })
 
