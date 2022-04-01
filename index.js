@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const passport = require('./middlewares/passport');
 const args = require('./utils/args.utils')
 const cluster = require('cluster')
+const os = require('os')
 
 const env = require('./env.config');
 const dbConfig = require('./db/config');
@@ -12,7 +13,7 @@ const apisRoutes = require('./routers/app.routers');
 
 const mode = args.mode;
 const app = express();
-
+console.log(mode)
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -55,7 +56,7 @@ if (mode == 'cluster') {
       mongoose.connect(dbConfig.mongodb.connectTo('ecommerce'))
       .then(() => {
         console.log('Connected to DB!');
-        console.log('[', process.pid, `] => running on http://localhost:${PORT}`);
+        console.log('[', process.pid, `] => running on http://localhost:${PORT} - c`);
       });
     });
     
@@ -70,7 +71,7 @@ if (mode == 'cluster') {
     mongoose.connect(dbConfig.mongodb.connectTo('ecommerce'))
     .then(() => {
       console.log('Connected to DB!');
-      console.log('[', process.pid, `] => running on http://localhost:${PORT}`);
+      console.log('[', process.pid, `] => running on http://localhost:${PORT} - f`);
     });
   });
   

@@ -1,4 +1,5 @@
 const args = require('../../utils/args.utils')
+const os = require('os')
 const info = (req,res) => {
   const data = {
     argumentos : args,
@@ -8,6 +9,7 @@ const info = (req,res) => {
     path : process.execPath,
     processId : process.pid,
     directorio : process.cwd(),
+    num_CPUs : os.cpus().length
   }
   console.log(data)
   res.render('info', {data:data})

@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "dev": "nodemon .",
-    "dev-1": "nodemon . -p 3000",
-    "fork": "pm2 start index.js --name=Fork-Server -- --PORT=8081",
-    "cluster": "pm2 start index.js --name=Cluster-Server -i max -- --PORT=8082"
+    "dev-fork": "nodemon . -m fork",
+    "dev-cluster": "nodemon . -m cluster",
+    "f-fork": "forever start index.js --watch --mode fork",
+    "f-cluster": "forever start index.js --watch --mode cluster",
+    "fork": "pm2 start index.js --name=Fork-Server --watch -- --PORT=8081",
+    "cluster": "pm2 start index.js --name=Cluster-Server --watch -i max -- --PORT=8082"
   },
   "keywords": [],
   "author": "",
