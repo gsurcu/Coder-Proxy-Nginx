@@ -3,7 +3,7 @@ const express = require('express');
 const apiRoutes = require('./api/api.routes');
 const auth = require('../middlewares/auth');
 const infoRoute = require('./info/info.routes')
-const PORT = require('../utils/args.utils').PORT
+const PORT = process.argv[2]
 const router = express.Router();
 
 

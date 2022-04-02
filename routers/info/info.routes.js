@@ -1,8 +1,7 @@
-const args = require('../../utils/args.utils')
 const os = require('os')
 const info = (req,res) => {
   const data = {
-    argumentos : args,
+    argumentos : process.argv.slice(2),
     sistema : process.platform,
     version : process.version,
     memoria: process.memoryUsage().rss,

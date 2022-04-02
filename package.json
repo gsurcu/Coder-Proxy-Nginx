@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "dev-fork": "nodemon . -m fork",
-    "dev-cluster": "nodemon . -m cluster",
-    "f-fork": "forever start index.js --watch --mode fork",
-    "f-cluster": "forever start index.js --watch --mode cluster",
-    "fork": "pm2 start index.js --name=Fork-Server --watch -- --PORT 8081",
-    "cluster": "pm2 start index.js --name=Cluster-Server --watch -i max -- --PORT 8082"
+    "dev-fork": "nodemon . 8080 fork",
+    "dev-cluster": "nodemon . 8081 cluster",
+    "f-fork": "forever start index.js 8080 fork",
+    "f-cluster": "forever start index.js 8081 cluster",
+    "pm2-fork": "pm2 start index.js --name=Fork-Server --watch -- 8080",
+    "pm2-cluster": "pm2 start index.js --name=Cluster-Server --watch -i max -- 8081"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +23,6 @@
     "express": "4.17.3",
     "express-session": "1.17.2",
     "forever": "4.0.3",
-    "minimist": "1.2.6",
     "moment": "2.29.1",
     "mongoose": "6.2.4",
     "normalizr": "3.6.1",

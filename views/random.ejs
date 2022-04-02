@@ -8,7 +8,7 @@
 </head>
 <body>
   <main>
-    <div><%= pid %> </div>
+    <div><%= process.argv[2] %> => <%= process.pid %> </div>
     <hr>
     <% for (const num in numbers ) { %>
       <div>

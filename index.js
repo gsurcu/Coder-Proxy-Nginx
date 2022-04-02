@@ -3,7 +3,6 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 const passport = require('./middlewares/passport');
-const args = require('./utils/args.utils')
 const cluster = require('cluster')
 const os = require('os')
 
@@ -11,7 +10,7 @@ const env = require('./env.config');
 const dbConfig = require('./db/config');
 const apisRoutes = require('./routers/app.routers');
 
-const mode = args.mode;
+const mode = process.argv[3] == 'cluster';
 const app = express();
 console.log(mode)
 // Middlewares
@@ -37,41 +36,25 @@ app.set('view engine', 'ejs');
 // Routes
 app.use(apisRoutes);
 
-if (mode == 'cluster') {
-  if (cluster.isPrimary) {
-    console.log('Primary process PID =>', process.pid)
-    
-    const numCPUs = os.cpus().length
-    console.log('No. de nucleos => ', numCPUs)
+if (mode && cluster.isPrimary) {
+  console.log('Primary process PID =>', process.pid)
   
-    for (let i = 0; i < numCPUs; i++) cluster.fork();
-  
-    cluster.on('exit', (worker, code) => {
-      console.log('Worker ', worker.process.pid, `Exitted on ${new Date().toLocaleDateString()}`);
-      cluster.fork()
-    })
-  } else {
-    const PORT = args.PORT
-    const runningServer = app.listen(PORT, async () => {
-      mongoose.connect(dbConfig.mongodb.connectTo('ecommerce'))
-      .then(() => {
-        console.log('Connected to DB!');
-        console.log('[', process.pid, `] => running on http://localhost:${PORT} - c`);
-      });
-    });
-    
-    runningServer.on('error', (error) => {
-      console.log(error.message)
-    });
-  }
-  
+  const numCPUs = os.cpus().length
+  console.log('No. de nucleos => ', numCPUs)
+
+  for (let i = 0; i < numCPUs; i++) cluster.fork();
+
+  cluster.on('exit', (worker, code) => {
+    console.log('Worker ', worker.process.pid, `Exitted on ${new Date().toLocaleDateString()}`);
+    cluster.fork()
+  })
 } else {
-  const PORT = args.PORT
+  const PORT = process.argv[2] || 8080
   const runningServer = app.listen(PORT, async () => {
     mongoose.connect(dbConfig.mongodb.connectTo('ecommerce'))
     .then(() => {
       console.log('Connected to DB!');
-      console.log('[', process.pid, `] => running on http://localhost:${PORT} - f`);
+      console.log('[', process.pid, `] => running on http://localhost:${PORT}`);
     });
   });
   
